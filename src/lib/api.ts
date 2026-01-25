@@ -364,13 +364,48 @@ function mergeRealData(base: any, realData: any): Stock {
     };
 }
 
+// Deterministic Market Cycle (Changes every hour)
+function getMarketCycle(): { trend: 'BULL' | 'BEAR' | 'NEUTRAL', multiplier: number } {
+    const hour = new Date().getHours();
+
+    // Simple logic: Morning (9-12) Bull, Afternoon (13-16) Bear, Evening Neutral
+    // Or just alternate for demo purposes
+    if (hour % 3 === 0) return { trend: 'BULL', multiplier: 1.5 }; // Attack Mode
+    if (hour % 3 === 1) return { trend: 'BEAR', multiplier: -1.5 }; // Defense Mode
+    return { trend: 'NEUTRAL', multiplier: 0.2 }; // Ambush Mode
+}
+
 function generateRandomStockData(base: Stock | any): Stock {
     const basePrice = base.basePrice || 100;
     // Inject artificial volatility for specific "Risky" demo stocks
     const isVolatile = ['DOGE-USD', 'SHIB-USD', 'SASA', 'XRP-USD', 'TSLA', 'NVDA', 'GME'].includes(base.symbol) || base.name.includes("High Volatility");
     const volatilityFactor = isVolatile ? 0.15 : 0.05; // 15% for risky, 5% for normal
 
-    const percentVariation = (Math.random() - 0.5) * volatilityFactor;
+    let percentVariation = (Math.random() - 0.5) * volatilityFactor;
+
+    // --- STABILIZATION FIX ---
+    // For VIGIL indicators (TUR, VIX, UUP), use the Market Cycle to determine direction consistently
+    // This prevents the strategy from flipping indiscriminately on every refresh
+    if (['TUR', 'SPY', 'UUP', 'VIX', 'NVDA', 'GLD'].includes(base.symbol)) {
+        const cycle = getMarketCycle();
+
+        // Add bias based on cycle
+        let bias = 0;
+        if (base.symbol === 'VIX' || base.symbol === 'UUP') {
+            // Inverse indicators (High VIX/UUP is bad)
+            if (cycle.trend === 'BULL') bias = -0.02; // Drop VIX/UUP
+            if (cycle.trend === 'BEAR') bias = 0.035; // Spike VIX/UUP
+        } else {
+            // Normal indicators (TUR, SPY)
+            if (cycle.trend === 'BULL') bias = 0.025; // Pump TUR
+            if (cycle.trend === 'BEAR') bias = -0.025; // Dump TUR
+        }
+
+        // Apply bias + smaller random noise
+        percentVariation = bias + ((Math.random() - 0.5) * 0.01);
+    }
+    // -------------------------
+
     const variation = basePrice * percentVariation;
 
     const price = Math.max(0.000001, basePrice + variation); // Safety for very low priced cryptos
