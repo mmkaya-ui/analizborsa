@@ -1,36 +1,59 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Stock Detective (Borsa Analizi) — Real-Time Market Anomaly & Risk Radar
+
+A quantitative stock analysis dashboard built with **Next.js** and **TypeScript** that monitors market movements, calculates technical health metrics, and flags high-risk anomalies across equities using automated heuristics.
+
+---
+
+## Key Features
+
+- **Automated Market Detective Engine:** Continuously tracks equities to spot unusual volatility, RSI divergences, and sudden volume surges.
+- **High-Performance In-Memory Caching:** Implements Next.js `unstable_cache` with a 300-second revalidation window to minimize Yahoo Finance rate-limiting and maximize responsiveness.
+- **Dynamic Risk Scoring:** Algorithmic calculation evaluating 60-day price trends, volatility bands, and moving averages to output structured risk scores and human-readable risk rationales.
+- **Interactive Multi-Asset Dashboard:** Real-time charts, global market radars, watchlists, and anomaly heatmaps.
+- **Full Localization (i18n):** Multi-language support (English, Turkish, German) via `next-intl`.
+
+---
+
+## Technical Architecture
+
+```mermaid
+flowchart LR
+    A[Yahoo Finance Historical & Quotes] --> B[Data Fetcher & Sanitizer]
+    B --> C[Next.js Revalidation Cache 300s]
+    C --> D[Stock Detective Engine]
+    D --> E[RSI & Volatility Calculation]
+    D --> F[Anomaly & Heuristic Risk Scorer]
+    E & F --> G[Zustand Store / State]
+    G --> H[Detective Dashboard & Radar UI]
+```
+
+---
+
+## Tech Stack
+
+- **Framework:** Next.js (App Router, Server Components)
+- **Language:** TypeScript
+- **Market Data:** `yahoo-finance2`
+- **State Management:** Zustand
+- **Internationalization:** `next-intl` (en, tr, de)
+- **Styling:** Tailwind CSS, PostCSS
+
+---
 
 ## Getting Started
 
-First, run the development server:
+### 1. Installation
+
+```bash
+git clone https://github.com/mmkaya-ui/analizborsa.git
+cd borsa
+npm install
+```
+
+### 2. Run the App
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Visit [http://localhost:3000](http://localhost:3000) to inspect real-time market data.
