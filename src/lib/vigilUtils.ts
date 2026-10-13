@@ -1,4 +1,5 @@
 import { Stock } from './api';
+import { SocialSignal } from './socialMediaService';
 
 export interface VigilReport {
     score: number;
